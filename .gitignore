@@ -1,0 +1,7 @@
+# Folder view config files
+.DS_STORE
+Desktop.ini
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
