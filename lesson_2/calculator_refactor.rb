@@ -8,9 +8,9 @@ end
 
 def operation_to_msg(op)
   case op
-  when '1' 
+  when '1'
     'Adding'
-  when '2' 
+  when '2'
     'Subtracting'
   when '3'
     'Multiplying'
@@ -18,7 +18,6 @@ def operation_to_msg(op)
     'Dividing'
   end
 end
-
 
 prompt("Welcome to the Simple Calulator! Please Enter your name:")
 name = ''
@@ -38,7 +37,6 @@ loop do # main loop
   loop do
     prompt("Enter the first number: ")
     number1 = Kernel.gets().chomp()
-    
     if number_valid?(number1)
       break
     else
@@ -63,23 +61,23 @@ loop do # main loop
     4)divide
   MSG
   prompt(operator_prompt)
-  operator =''
+  operator = ''
   loop do
     operator = Kernel.gets().chomp()
     break if %w(1 2 3 4).include?(operator)
     prompt("must choose 1) 2) 3) 4)")
   end
   prompt("#{operation_to_msg(operator)} the two numbers...")
-  result = case operator
-    when '1'
-      result = number1.to_i() + number2.to_i()
-    when '2'
-      result = number1.to_i() - number2.to_i()
-    when '3'
-      result = number1.to_i() * number2.to_i()
-    when '4' 
-      result = number1.to_f() / number2.to_f()
-    end
+  case operator
+  when '1'
+    result = number1.to_i() + number2.to_i()
+  when '2'
+    result = number1.to_i() - number2.to_i()
+  when '3'
+    result = number1.to_i() * number2.to_i()
+  when '4'
+    result = number1.to_f() / number2.to_f()
+  end
   prompt("Result is: #{result}")
   prompt("Do you want to make another calculation? Y/N")
   reply = Kernel.gets().chomp().downcase()
