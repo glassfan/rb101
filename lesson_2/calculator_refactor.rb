@@ -19,7 +19,7 @@ def operation_to_msg(op)
   end
 end
 
-prompt("Welcome to the Simple Calulator! Please Enter your name:")
+prompt("Welcome to the Simple Calculator! Please Enter your name:")
 name = ''
 loop do
   name = Kernel.gets().chomp()
