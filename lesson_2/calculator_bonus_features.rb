@@ -51,6 +51,7 @@ loop do # main loop
     number1 = gets.chomp
     if number_valid?(number1)
       number1 = number_type(number1)
+      next if number1 == 0
       break
     else
       prompt(MESSAGES['not_valid'])
