@@ -9,7 +9,7 @@ def number_valid?(num)
   /\d/.match(num) && /^-?\d*\.?\d*$/.match(num)
 end
 
-def number_cast(str_num)
+def str_to_number(str_num)
   if str_num.include? "."
     str_num.to_f
   else
@@ -21,65 +21,64 @@ def trim_lead_zeroes(str)
   str.sub!(/^0+/, "")
 end
 
+def get_user_input(message, num_type, err_msg)
+  user_input = ''
+  loop do
+    prompt(MESSAGES[message])
+    user_input = gets.chomp
+    if number_valid?(user_input)
+      trim_lead_zeroes(user_input)
+      user_input = str_to_number(user_input)
+      case num_type
+      when 'loan_duration'
+        next if user_input.is_a? Float
+      else
+        next if user_input == 0 || user_input < 0
+      end
+      break
+    else prompt(MESSAGES[err_msg])
+    end
+  end
+  user_input
+end
+
+def again?
+  loop do
+    prompt(MESSAGES['another'])
+    reply = gets.chomp.downcase
+    if reply == 'y'
+      break true
+    elsif reply == 'n'
+      break false
+    else
+      next
+    end
+  end
+end
+
+def display_calculations(loan_amount, apr, mir, loan_duration, monthly_payment)
+  puts "------------ Loan Summary ---------------------"
+  puts "Loan Amount:                      $#{loan_amount}"
+  puts "Annual Percentage Rate:           $#{format('%.3f', apr)}%"
+  puts "Monthly Percentage Rate:          $#{format('%.4f', mir)}%"
+  puts "Loan Duration:                    #{loan_duration} years"
+  puts "Monthly Payment:                  $#{format('%.2f', monthly_payment)}"
+  puts "-----------------------------------------------"
+end
 prompt(MESSAGES['welcome'])
 
+# Main loop
 loop do
-  loan_amount = ''
-  loop do
-    prompt(MESSAGES['loan_amount'])
-    loan_amount = gets.chomp
-    if number_valid?(loan_amount)
-      trim_lead_zeroes(loan_amount)
-      loan_amount = number_cast(loan_amount)
-      next if loan_amount == 0 || loan_amount < 0
-      break
-    else
-      prompt(MESSAGES['error_loan'])
-    end
-  end
-
-  apr = ''
-  loop do
-    prompt(MESSAGES['apr'])
-    apr = gets.chomp
-    if number_valid?(apr)
-      trim_lead_zeroes(apr)
-      apr = number_cast(apr) * 0.01
-      next if apr == 0 || apr < 0
-      break
-    else
-      prompt(MESSAGES['error_apr'])
-    end
-  end
-
-  loan_duration = ''
-  loop do
-    prompt(MESSAGES['loan_duration'])
-    loan_duration = gets.chomp
-    if number_valid?(loan_duration)
-      trim_lead_zeroes(loan_duration)
-      loan_duration = number_cast(loan_duration)
-      next if loan_duration == 0 || loan_duration < 0
-      break
-    else
-      prompt(MESSAGES['error_loan_duration'])
-    end
-  end
-  mir = apr / 12.0
-  months_duration = loan_duration * 12.0
+  loan_amount = get_user_input('loan_amount', 'loan_amount', 'error_loan')
+  apr = get_user_input('apr', 'apr', 'error_apr')
+  loan_duration = get_user_input('loan_duration',
+                                 'loan_duration',
+                                 'error_loan_duration')
+  mir = (apr * 0.01) / 12.0
+  months_duration = loan_duration * 12
   monthly_payment = loan_amount * (mir / (1 - (1 + mir)**(-months_duration)))
-
-  puts "############## Loan Summary #############"
-  puts "Loan Amount: $#{loan_amount}"
-  puts "Annual Percentage Rate: #{apr}%"
-  puts "Monthly Percentage Rate: #{mir}%"
-  puts "Loan Duration: #{loan_duration} years"
-  puts "Monthly Payment: $#{format('%.2f', monthly_payment)}"
-  puts "#########################################"
-
-  prompt(MESSAGES['another'])
-  reply = gets.chomp.downcase
-  break unless reply.start_with?('y')
+  display_calculations(loan_amount, apr, mir, loan_duration, monthly_payment)
+  break unless again?
 end
 
 prompt(MESSAGES['exit'])
